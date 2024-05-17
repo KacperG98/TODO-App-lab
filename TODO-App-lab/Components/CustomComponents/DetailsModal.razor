@@ -1,0 +1,86 @@
+﻿@using TODO_App_lab.Services.Interfaces
+@inject ITodoItemRepository _repository;
+<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row align-items-start">
+                        <div class="col">
+                            <h5 class="modal-title">@Item.Title</h5>
+                        </div>
+                        <div>
+                            <i class="bi bi-trash3" @onclick="() => Delete()"></i>
+                        </div>
+
+                    </div>
+                </div>
+                <hr />
+                <div class="container">
+                    <div class="row align-items-start">
+                        <p>
+                            <div class="col">
+                                @((Item.EndTime.HasValue)? "Data od:" : "Data:")
+                            </div>
+                            <div class="col">
+                                @Item.StartTime.ToString("dd.mm.yyyy hh:MM")
+                            </div>
+                        </p>
+                        @if (Item.EndTime.HasValue)
+                        {
+                            <p>
+                                <div class="col">
+                                    Data do: 
+                                </div>
+                                <div class="col">
+                                    @Item.EndTime?.ToString("dd.mm.yyyy hh:MM")
+                                </div>
+                            </p>
+                        }
+                    </div>
+                </div>
+                <hr />
+                <p>@Item.Description</p>
+                <hr />
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Zamknij</button>
+            </div>
+        </div>
+    </div>
+</div>
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    [Parameter]
+    public TodoItem Item { get; set; }
+
+    public Guid Guid = Guid.NewGuid();
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+
+    public void Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    void Delete()
+    {
+        _repository.Delete(Item);
+        Close();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+
+}

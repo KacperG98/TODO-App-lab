@@ -1,0 +1,18 @@
+@using CommunityToolkit.Maui.Core
+@using TODO_App_lab.Components.CustomComponents
+
+<DetailsModal Item="@Item" @ref="Modal"></DetailsModal>
+
+<li class="list-group-item btn btn-primary" @onclick="() => Modal.Open()">@Item.Title</li>
+
+@code {
+    [Parameter]
+    public TodoItem Item { get; set; }
+
+    DetailsModal Modal { get; set; }
+
+    async void showToastr()
+        => await CommunityToolkit.Maui.Alerts.Toast
+            .Make(Item.Title, ToastDuration.Short, 14d)
+            .Show(new CancellationTokenSource().Token);
+}

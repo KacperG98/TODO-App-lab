@@ -1,0 +1,22 @@
+﻿@page "/"
+@using TODO_App_lab.Services.Interfaces
+@inject ITodoItemRepository _repository;
+
+<div class="card">
+  <ul class="list-group list-group-flush">
+        @foreach (var n in _repository.GetAll())
+       {
+           <TodoListItem Item="@n"></TodoListItem>
+       }
+   </ul>
+</div>
+
+
+@code{
+    private string myStringValue = string.Empty;
+    async void showToastr()
+        => await CommunityToolkit.Maui.Alerts.Toast
+            .Make(myStringValue, ToastDuration.Short, 14d)
+            .Show(new CancellationTokenSource().Token);
+    
+}

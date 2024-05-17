@@ -1,0 +1,58 @@
+﻿@page "/counter"
+@using TODO_App_lab.Services.Interfaces
+@inject ITodoItemRepository _repository;
+
+<form>
+    <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Tytuł</label>
+        <input type="text" class="form-control" id="title" aria-describedby="emailHelp" @bind="Title" placeholder="Tytuł">
+    </div>
+
+    <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Opis</label>
+        <input type="text" class="form-control" id="title" aria-describedby="emailHelp" @bind="Description" placeholder="Opis">
+    </div>
+
+    <div class="mb-3">
+        <label for="startDate">Początek</label>
+        <input id="startDate" class="form-control" type="datetime-local" @bind="StartTime" />
+
+    </div>
+
+    <div class="mb-3">
+        <label for="endDate">Koniec</label>
+        <input id="endDate" class="form-control" type="datetime-local" @bind="EndTime" />
+    </div>
+    
+    <button type="button" class="btn btn-primary" @onclick="() => add()">Zapisz</button>
+</form>
+
+@code {
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public DateTime? StartTime { get; set; } = DateTime.Now;
+    public DateTime? EndTime { get; set; } = DateTime.Now;
+
+    void add()
+    {
+        var newItem = new TodoItem()
+            {
+                Title = Title,
+                Description = Description,
+                StartTime = StartTime.Value,
+                EndTime = EndTime,
+                Status = ItemStatus.NEW
+            };
+        _repository.Add(newItem);
+        showToastr();
+        Title = string.Empty;
+        Description = string.Empty;
+        StartTime = DateTime.Now;
+        EndTime = null;
+    }
+    
+    async void showToastr()
+        => await CommunityToolkit.Maui.Alerts.Toast
+            .Make("Zadanie zostało dodane", ToastDuration.Short, 14d)
+            .Show(new CancellationTokenSource().Token);
+}
