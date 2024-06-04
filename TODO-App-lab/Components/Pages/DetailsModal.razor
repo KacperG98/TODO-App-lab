@@ -1,5 +1,6 @@
 ﻿@using TODO_App_lab.Services.Interfaces
 @inject ITodoItemRepository _repository;
+
 <div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -9,10 +10,9 @@
                         <div class="col">
                             <h5 class="modal-title">@Item.Title</h5>
                         </div>
-                        <div>
-                            <i class="bi bi-trash3" @onclick="() => Delete()"></i>
-                        </div>
-
+                        <button type="button" class="col btn btn-danger" @onclick="async () => await Delete()">
+                            <i class="bi bi-trash3"></i>
+                        </button>
                     </div>
                 </div>
                 <hr />
@@ -20,20 +20,20 @@
                     <div class="row align-items-start">
                         <p>
                             <div class="col">
-                                @((Item.EndTime.HasValue)? "Data od:" : "Data:")
+                                @((Item.EndTime.HasValue) ? "Data od:" : "Data:")
                             </div>
                             <div class="col">
-                                @Item.StartTime.ToString("dd.mm.yyyy hh:MM")
+                                @Item.StartTime.ToString("dd.MM.yyyy HH:mm")
                             </div>
                         </p>
                         @if (Item.EndTime.HasValue)
                         {
                             <p>
                                 <div class="col">
-                                    Data do: 
+                                    Data do:
                                 </div>
                                 <div class="col">
-                                    @Item.EndTime?.ToString("dd.mm.yyyy hh:MM")
+                                    @Item.EndTime?.ToString("dd.MM.yyyy HH:mm")
                                 </div>
                             </p>
                         }
@@ -42,7 +42,7 @@
                 <hr />
                 <p>@Item.Description</p>
                 <hr />
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Zamknij</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Zamknij</button>
             </div>
         </div>
     </div>
@@ -56,22 +56,25 @@
     [Parameter]
     public TodoItem Item { get; set; }
 
-    public Guid Guid = Guid.NewGuid();
-    public string ModalDisplay = "none;";
-    public string ModalClass = "";
-    public bool ShowBackdrop = false;
+    [Parameter]
+    public EventCallback<TodoItem> OnDeleteAction { get; set; }
+
+    public string ModalDisplay { get; set; } = "none;";
+    public string ModalClass { get; set; } = "";
+    public bool ShowBackdrop { get; set; } = false;
 
     public void Open()
     {
         ModalDisplay = "block;";
-        ModalClass = "Show";
+        ModalClass = "show";
         ShowBackdrop = true;
         StateHasChanged();
     }
 
-    void Delete()
+    public async Task Delete()
     {
         _repository.Delete(Item);
+        await OnDeleteAction.InvokeAsync(Item);
         Close();
     }
 
@@ -82,5 +85,4 @@
         ShowBackdrop = false;
         StateHasChanged();
     }
-
 }

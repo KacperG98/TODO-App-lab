@@ -2,21 +2,34 @@
 @using TODO_App_lab.Services.Interfaces
 @inject ITodoItemRepository _repository;
 
-<div class="card">
-  <ul class="list-group list-group-flush">
-        @foreach (var n in _repository.GetAll())
-       {
-           <TodoListItem Item="@n"></TodoListItem>
-       }
-   </ul>
-</div>
+@if (Items is null || !Items.Any())
+{
+    <div class="alert alert-light" role="alert">
+        Nie dodano jeszcze żadnych zadań!
+    </div>
+}
+else
+{
+    <div class="card">
+        <ul class="list-group list-group-flush">
+            @foreach (var n in Items)
+            {
+                <TodoListItem Item="@n" OnDeleteAction="DeleteItem"></TodoListItem>
+            }
+        </ul>
+    </div>
+}
 
+@code {
+    public List<TodoItem> Items { get; set; }
 
-@code{
-    private string myStringValue = string.Empty;
-    async void showToastr()
-        => await CommunityToolkit.Maui.Alerts.Toast
-            .Make(myStringValue, ToastDuration.Short, 14d)
-            .Show(new CancellationTokenSource().Token);
-    
+    protected override void OnInitialized()
+    {
+        Items = _repository.GetAll();
+    }
+
+    public void DeleteItem(TodoItem item)
+    {
+        Items.Remove(item);
+    }
 }
