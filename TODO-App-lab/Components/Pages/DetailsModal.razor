@@ -1,5 +1,5 @@
-﻿@using TODO_App_lab.Services.Interfaces
-@inject ITodoItemRepository _repository;
+﻿@inject ITodoItemRepository _repository;
+@inject CalendarService _calendarService;
 
 <div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
     <div class="modal-dialog" role="document">
@@ -40,9 +40,15 @@
                     </div>
                 </div>
                 <hr />
-                <p>@Item.Description</p>
-                <hr />
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Zamknij</button>
+                @if (!string.IsNullOrEmpty(Item.Description))
+                {
+                    <p>@Item.Description</p>
+                    <hr />
+                }
+                <div class="row align-items-start">
+                    <button type="button" class="col btn btn-secondary" style="height: 60px; margin:1px" data-dismiss="modal" @onclick="Close">Zamknij</button>
+                    <button type="button" class="col btn btn-secondary" style="height: 60px; margin:1px" data-dismiss="modal" @onclick="() => _calendarService.GenerateICalClicked(Item.Title, Item.StartTime, Item.EndTime)">Exportuj do kalendarza</button>
+                </div>
             </div>
         </div>
     </div>

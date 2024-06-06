@@ -21,6 +21,7 @@ namespace TODO_App_lab
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddBlazorBootstrap();
             builder.Services.AddSingleton<DefaultContext>();
+            builder.Services.AddSingleton<CalendarService>();
             builder.Services.AddSingleton<ITodoItemRepository, TodoItemRepository>();
 
 #if DEBUG

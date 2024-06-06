@@ -2,6 +2,8 @@
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net;
+using NodaTime;
+using CommunityToolkit.Maui.Core;
 
 namespace TODO_App_lab.Services
 {
@@ -11,17 +13,28 @@ namespace TODO_App_lab.Services
         {
             string summary = title;
 
-            var end = (endDate.HasValue) ? 
-                new CalDateTime(endDate.Value.Year, endDate.Value.Month, endDate.Value.Day, endDate.Value.Hour, endDate.Value.Minute,0) :
-                new CalDateTime(startDate.Year, startDate.Month, startDate.Day, startDate.Hour, startDate.Minute + 1,0);
+            var end = (endDate.HasValue) ?
+                new CalDateTime(endDate.Value.Year, endDate.Value.Month, endDate.Value.Day, endDate.Value.Hour, endDate.Value.Minute, 0) :
+                new CalDateTime(startDate.Year, startDate.Month, startDate.Day, startDate.Hour, startDate.Minute + 1, 0);
+
+            RecurrencePattern recurrence = null;
+            if (endDate.HasValue)
+            {
+                recurrence = new RecurrencePattern
+                {
+                    Frequency = FrequencyType.Daily, // Ustaw odpowiednią częstotliwość, jeśli jest wymagana
+                    Interval = 1,
+                    Until = endDate.Value
+                };
+            }
 
             var icalEvent = new CalendarEvent
             {
                 Summary = summary,
                 Start = new CalDateTime(startDate.Year, startDate.Month, startDate.Day, startDate.Hour, startDate.Minute, 0),
                 End = end,
-                IsAllDay = true,
-                RecurrenceRules = new List<RecurrencePattern>() { new RecurrencePattern(FrequencyType.None) }
+                IsAllDay = false,
+                RecurrenceRules = recurrence != null ? new List<RecurrencePattern>() { recurrence } : null
             };
 
             var calendar = new Calendar();
@@ -38,6 +51,8 @@ namespace TODO_App_lab.Services
             System.IO.File.WriteAllText(file, icalContent);
 
             Launcher.Default.OpenAsync(new OpenFileRequest(popoverTitle, new ReadOnlyFile(file))).ConfigureAwait(false);
+
+
         }
     }
 }
