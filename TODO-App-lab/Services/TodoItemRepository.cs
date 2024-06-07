@@ -29,6 +29,12 @@ namespace TODO_App_lab.Services
             _context.SaveChanges();
         }
 
+        public void AddRange(List<TodoItem> items)
+        {
+            _context.TodoItems.AddRange(items);
+            _context.SaveChanges();
+        }
+
         public void Update(TodoItem item)
         {
             var entity = _context.TodoItems.SingleOrDefault(i => item.Id == i.Id);

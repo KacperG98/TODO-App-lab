@@ -23,6 +23,7 @@ namespace TODO_App_lab
             builder.Services.AddSingleton<DefaultContext>();
             builder.Services.AddSingleton<CalendarService>();
             builder.Services.AddSingleton<ITodoItemRepository, TodoItemRepository>();
+            builder.Services.AddSingleton<ICsvManager, CsvManager>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

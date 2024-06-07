@@ -8,6 +8,8 @@ namespace TODO_App_lab.Services.Interfaces
 
         void Add(TodoItem item);
 
+        void AddRange(List<TodoItem> items);
+
         void Update(TodoItem item);
 
         void Delete(TodoItem item);
